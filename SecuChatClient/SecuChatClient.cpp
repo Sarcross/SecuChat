@@ -15,6 +15,9 @@
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
+#define LOCAL_HOST "localhost"
+
+void transferStringBytes(char*, char*, int);
 
 int __cdecl main(int argc, char **argv)
 {
@@ -30,10 +33,10 @@ int __cdecl main(int argc, char **argv)
 	int recvbuflen = DEFAULT_BUFLEN;
 
 	// Validate the parameters
-	if (argc != 2) {
+	/*if (argc != 2) {
 		printf("usage: %s server-name\n", argv[0]);
 		return 1;
-	}
+	}*/
 
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -48,7 +51,8 @@ int __cdecl main(int argc, char **argv)
 	hints.ai_protocol = IPPROTO_TCP;
 
 	// Resolve the server address and port
-	iResult = getaddrinfo(argv[1], DEFAULT_PORT, &hints, &result);
+	//iResult = getaddrinfo(argv[1], DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(LOCAL_HOST, DEFAULT_PORT, &hints, &result);
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
@@ -97,6 +101,7 @@ int __cdecl main(int argc, char **argv)
 		printf("send failed with error: %d\n", WSAGetLastError());
 		closesocket(ConnectSocket);
 		WSACleanup();
+		free(sendbuf);
 		return 1;
 	}
 
@@ -108,6 +113,7 @@ int __cdecl main(int argc, char **argv)
 		printf("shutdown failed with error: %d\n", WSAGetLastError());
 		closesocket(ConnectSocket);
 		WSACleanup();
+		free(sendbuf);
 		return 1;
 	}
 
@@ -117,7 +123,10 @@ int __cdecl main(int argc, char **argv)
 		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0) {
 			printf("Bytes received: %d\n", iResult);
-			printf("%s\n", recvbuf);
+			char* echoedMessage = (char*)malloc(iResult);
+			transferStringBytes(echoedMessage, recvbuf, iResult);
+			printf("%s\n", echoedMessage);
+			free(echoedMessage);
 		}
 		else if (iResult == 0)
 			printf("Connection closed\n");
@@ -135,4 +144,11 @@ int __cdecl main(int argc, char **argv)
 	free(sendbuf);
 
 	return 0;
+}
+
+void transferStringBytes(char* destination, char* source, int size) {
+	for (int ndx = 0; ndx < size; ndx++) {
+		destination[ndx] = source[ndx];
+	}
+	return;
 }

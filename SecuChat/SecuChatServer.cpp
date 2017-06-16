@@ -15,6 +15,8 @@
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 
+void transferStringBytes(char*, char*, int);
+
 int __cdecl main(void)
 {
 	WSADATA wsaData;
@@ -98,9 +100,13 @@ int __cdecl main(void)
 		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0) {
 			printf("Bytes received: %d\n", iResult);
+			char* echoMessage = (char*)malloc(iResult);
+			transferStringBytes(echoMessage, recvbuf, iResult);
+			printf("%s\n", echoMessage);
 
 			// Echo the buffer back to the sender
-			iSendResult = send(ClientSocket, recvbuf, iResult, 0);
+			iSendResult = send(ClientSocket, echoMessage, iResult, 0);
+			free(echoMessage);
 			if (iSendResult == SOCKET_ERROR) {
 				printf("send failed with error: %d\n", WSAGetLastError());
 				closesocket(ClientSocket);
@@ -134,4 +140,11 @@ int __cdecl main(void)
 	WSACleanup();
 
 	return 0;
+}
+
+void transferStringBytes(char* destination, char* source, int size) {
+	for (int ndx = 0; ndx < size; ndx++) {
+		destination[ndx] = source[ndx];
+	}
+	return;
 }
