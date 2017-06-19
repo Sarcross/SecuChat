@@ -7,6 +7,10 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <conio.h>
+
+#include "Connection.h"
+
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -19,6 +23,7 @@ void transferStringBytes(char*, char*, int);
 
 int __cdecl main(void)
 {
+	_beginthread(handleShutDown, 0, (void*) 0);
 	WSADATA wsaData;
 	int iResult;
 
@@ -125,7 +130,8 @@ int __cdecl main(void)
 		}
 
 	} while (iResult > 0);
-
+	closeClientConnection(ClientSocket);
+	/*
 	// shutdown the connection since we're done
 	iResult = shutdown(ClientSocket, SD_SEND);
 	if (iResult == SOCKET_ERROR) {
@@ -136,9 +142,11 @@ int __cdecl main(void)
 	}
 
 	// cleanup
-	closesocket(ClientSocket);
+	closesocket(ClientSocket);*/
 	WSACleanup();
 
+	printf("%d\n", (ClientSocket));
+	_getch();
 	return 0;
 }
 

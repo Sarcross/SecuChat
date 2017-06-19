@@ -119,9 +119,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Chatroom.h" />
+    <ClInclude Include="Connection.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Connection.c" />
     <ClCompile Include="SecuChatServer.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
