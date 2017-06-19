@@ -20,7 +20,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SecuChatServer.cpp">
+    <ClCompile Include="SecuChatServer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
